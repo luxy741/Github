@@ -55,9 +55,12 @@ def mark_as_packed(checklist):
             print('⚠️ The item was not found. Please confirm that the input is correct.')
 
 def add_custom_item(checklist):
-    item=input('Please enter the custom item you want to add: ')
-    checklist['custom'].append(item)
-    print(f'✅ Added:{item}')
+    while True:
+        item=input('Please enter the custom item you want to add: ')
+        if item.lower() == 'break':
+            break
+        checklist['custom'].append(item)
+        print(f'✅ Added:{item}')
 
 def remove_item(checklist):
     while True:
@@ -66,7 +69,7 @@ def remove_item(checklist):
             break
 
         found=False
-        for category in ['custom','clothing','destination']:
+        for category in ['custom','clothing','destination','basic']:
             if item in checklist[category]:
                 checklist[category].remove(item)
                 if item in checklist['packed']:
@@ -146,14 +149,23 @@ def main():
 
     departure_str=input('Please enter the departure date(DD/MM/YYYY): ')
     daparture_date=None
-    formats=['%d/%m/%Y','%Y-%m-%d','%-d/%-m/%Y','%#d/%#m/%Y']
+    formats=[
+        "%Y-%m-%d", "%Y/%m/%d",
+        "%d-%m-%Y", "%d/%m/%Y",
+        "%Y.%m.%d", "%d.%m.%Y",
+        "%Y %m %d", "%d %m %Y",
+    ]
     for fmt in formats:
         try:
-            departure_date=datetime.strptime(departure_str,'%d/%m/%Y').date()
+            departure_date=datetime.strptime(departure_str,fmt).date()
+            break
         except ValueError:
-            print('❌ Invalid departure date! Default is today.')
-            departure_date=datetime.today().date()
+            continue
 
+    if departure_date is None:
+        print('❌ Invalid departure date! Default is today.')
+        departure_date=datetime.today().date()
+    print(f'✔️ Departure date: {departure_date}')
     checklist=generate_checklist(destination_type,days)
     print('✅ This is your packing list!')
     show_menu()

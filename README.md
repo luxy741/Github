@@ -16,3 +16,5 @@ Get a summary of all items, packed count, and remaining count
 Check how many days are left until the trip starts
 
 Use the menu command at any time to bring up the available options
+
+Type break to return to the menu
